@@ -18,13 +18,18 @@ locals {
   ]
 
   cli_json = merge({
-    RoleArn           = var.role_arn
-    RoleSessionName   = local.role_session_name
-    PolicyArns        = local.policy_arns
-    DurationSeconds   = var.duration_seconds
-    Tags              = local.tags
+    RoleArn         = var.role_arn
+    RoleSessionName = local.role_session_name
+    DurationSeconds = var.duration_seconds
+    }, length(local.policy_arns) > 0 ? {
+    PolicyArns = local.policy_arns
+    } : {}, length(local.tags) > 0 ? {
+    Tags = local.tags
+    } : {}, length(var.transitive_tag_keys) > 0 ? {
     TransitiveTagKeys = var.transitive_tag_keys
-    }, var.external_id != null ? {
+    } : {}, var.external_id != null ? {
+    ExternalId = var.external_id
+    } : {}, var.external_id != null ? {
     ExternalId = var.external_id
     } : {}, var.serial_number != null ? {
     SerialNumber = var.serial_number
